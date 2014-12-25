@@ -3,7 +3,7 @@ package info.jiangchuan.steps;
 import java.lang.Math;
 /**
  * Created by jiangchuan on 12/21/14.
- * credit goes to [url]
+ * credit goes to [url] http://rjeschke.tumblr.com/post/8382596050/fir-filters-in-practice
  */
 public class Filter {
     public static double sinc(final double x) {

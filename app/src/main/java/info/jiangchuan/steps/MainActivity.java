@@ -41,18 +41,17 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
     double[] real = new double[512];
     double[] img = new double[512];
     private FFT FFTObj = new FFT(512); // size needs to be power of 2
-    private double[]mNormData = new double[windowSize];
-    private double[] filter;
+    private double[]mNormData = new double[windowSize]; // store normalized raw data, we don't use Java util class
+    private double[] filter; // FIR kernel coefficient
+    private int size = 0;    // store raw data buffer size
 
-    private int size = -1;
     private long sampleStartTime;
     private long sampleEndTime;
-    private long sampleCounter = -1;
-    private long sampleFrequency = 0;
+    private long sampleCounter = 0; // keep number of counters to compute sample frequency
+    private double sampleFrequency = 0;
     private double totalSteps = 0;
 
-    private boolean hasFilterCoefficient = false;
-
+    private boolean hasFilterCoefficient = false; // flag indicates kernel coefficient has been created
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +59,14 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         setContentView(R.layout.activity_main);
 
         mHZ = (TextView)findViewById(R.id.txtHZ);
+        mWindow = (TextView)findViewById(R.id.txtWNDSize);
         mPower = (TextView)findViewById(R.id.txtPower);
         mFreq = (TextView)findViewById(R.id.txtFreq);
         mViewSteps = (TextView)findViewById(R.id.txtSteps);
         mThreshold = (TextView)findViewById(R.id.txtThreshold);
-        mThreshold.setText("50");
+        mThreshold.setText(Double.toString(threshold));
 
+        mWindow.setText(Integer.toString(windowSize));
         // sensor
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -110,12 +111,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
         updateCurrentSampelFrequency(event.timestamp);
 
-        double x = (double) (event.values[0]);
-        double y = (double) (event.values[1]);
-        double z = (double) (event.values[2]);
-        appendRawDataIntoBuffer(x, y, z);
-
-        if (getRawDataBufferSize() == windowSize-1) {
+        if (getRawDataBufferSize() == windowSize) {
             double[]pt = getFrequencyDomainPeakPointInRange(0, 30);
             mHZ.setText(Double.toString(getCurrentSampleFrequency()));
             if (pt[0] >= threshold) {
@@ -127,6 +123,12 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
             }
             mPower.setText(Double.toString(pt[0]));
         }
+
+        double x = (double) (event.values[0]);
+        double y = (double) (event.values[1]);
+        double z = (double) (event.values[2]);
+
+        appendRawDataIntoBuffer(x, y, z);
         mViewSteps.setText(Double.toString(totalSteps));
     }
 
@@ -139,7 +141,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         System.arraycopy(tmp, 0, real, 0, tmp.length);
         FFTObj.fft(real, img);
 
-        double[] value = getAbsoluteValue(real, img);
+        double[] value = toAbsoluteValueArray(real, img);
         int rightBound = value.length/2 * 5 * 2 / (int)getCurrentSampleFrequency();
         int maxIndex = getIndexOfMaxElementInRange(value, 0, rightBound);
 
@@ -167,9 +169,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
             filter =  Filter.createBandpass(200, 0.7, 10, getCurrentSampleFrequency());
             hasFilterCoefficient = true;
         }
-        return filter;
+        return filter; // simply return coefficient array
     }
-    private double[] getAbsoluteValue(double[] real, double[]img) {
+    private double[] toAbsoluteValueArray(double[] real, double[]img) {
         double[] res = new double[real.length];
         for ( int i = 0; i < real.length; i++) {
             res[i] = Math.sqrt(real[i]*real[i] + img[i]*img[i]);
@@ -177,9 +179,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         return res;
     }
 
-    // raw data buffer
+    // append to raw data buffer
     private void appendRawDataIntoBuffer(double x, double y, double z) {
-        ++size;
         double norm = Math.sqrt(x*x + y*y + z*z);
         if (size == windowSize) {
             try {
@@ -190,9 +191,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
             }
         }
 
-        mNormData[size] = norm;
+        mNormData[size++] = norm;
     }
-    // raw data buffer
+
     private double[] getRawDataBuffer() {
         return mNormData;
     }
@@ -201,23 +202,22 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         return size;
     }
 
-    // sampleFrequency
     private double getCurrentSampleFrequency() {
         return sampleFrequency;
     }
     // sampleFrequency
     private void updateCurrentSampelFrequency(long curSampleTimeStamp)
     {
-        ++sampleCounter;
         if (sampleCounter == 0) {
             sampleStartTime = curSampleTimeStamp;
+        }
+        else if (sampleCounter == windowSize) {
+            sampleEndTime = curSampleTimeStamp;
+            double count = (double)windowSize;
+            sampleFrequency = count * 1000000000/(sampleEndTime - sampleStartTime);
+            sampleCounter = 0;
             return;
         }
-        if (sampleCounter == windowSize-1) {
-            sampleEndTime = curSampleTimeStamp;
-            long count = windowSize-1;
-            sampleFrequency = count * 1000000000/(sampleEndTime - sampleStartTime);
-            sampleCounter = -1;
-        }
+        ++sampleCounter;
     }
 }
