@@ -75,16 +75,9 @@ public class MainActivity extends Activity implements SensorEventListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        //mHZ = (TextView)findViewById(R.id.txtHZ);
-        //mWindow = (TextView)findViewById(R.id.txtWNDSize);
-        //mPower = (TextView)findViewById(R.id.txtPower);
         mFreq = (TextView)findViewById(R.id.textView_StepsPerMinute);
         mViewSteps = (TextView)findViewById(R.id.textView_steps);
         mStopWatch = (TextView)findViewById(R.id.textView_stopWatch);
-        //mThreshold = (TextView)findViewById(R.id.txtThreshold);
-        //mThreshold.setText(Double.toString(threshold));
-
-        //mWindow.setText(Integer.toString(windowSize));
         // sensor
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
