@@ -4,6 +4,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -12,12 +13,17 @@ import android.hardware.SensorManager;
 import android.util.Log;
 import android.widget.TextView;
 import android.content.Context;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.Color;
+import android.view.ViewParent;
+import android.app.ActionBar;
+import android.app.Activity;
 
 import java.io.File;
 import java.io.FileWriter;
 import java.util.Arrays;
 
-public class MainActivity extends ActionBarActivity implements SensorEventListener
+public class MainActivity extends Activity implements SensorEventListener
 {
     private final String TAG = "MainActivity";
 
