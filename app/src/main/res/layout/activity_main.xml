@@ -61,7 +61,7 @@
             android:padding="5sp"
             android:textColor="#f57c00"
             android:textStyle="bold"
-            android:text="10000"
+            android:text="0"
             />
 
 
@@ -82,7 +82,7 @@
             android:padding="5sp"
             android:textColor="#f57c00"
             android:textStyle="bold"
-            android:text="90"/>
+            android:text="0"/>
 
     </LinearLayout>
 

@@ -35,13 +35,9 @@ public class MainActivity extends Activity implements SensorEventListener
     private final String TAG = "MainActivity";
 
     // view elements
-    //private TextView mHZ;    // sample frequency
-    //private TextView mPower; // power of spectrum
-    //private TextView boo; // window size
     private TextView mViewSteps; // Steps counting by this algorithm
     private TextView mFreq; // current walking frequency
     private TextView mStopWatch; // stop watch
-    //private TextView mThreshold;
 
     // sensor
     private SensorManager mSensorManager;
@@ -50,7 +46,7 @@ public class MainActivity extends Activity implements SensorEventListener
     // parameters of this algorithm
     private final int windowSize = 400;
     private final int incrementScale = 50;
-    private final double threshold = 50;
+    private final double threshold = 60;
 
     double[] real = new double[512];
     double[] img = new double[512];
@@ -121,7 +117,7 @@ public class MainActivity extends Activity implements SensorEventListener
             if (hour == 24) {
                 hour = 0;
             }
-            mStopWatch.setText(String.format("%2d:%2d:%2d", hour, min, sec));
+            mStopWatch.setText(String.format("%02d:%02d:%02d", hour, min, sec));
             ++sec;
         }
 
@@ -146,7 +142,7 @@ public class MainActivity extends Activity implements SensorEventListener
         this.hour = 0;
         this.min = 0;
         this.sec = 0;
-        mStopWatch.setText(String.format("%2d:%2d:%2d", hour, min, sec));
+        mStopWatch.setText(String.format("%02d:%02d:%02d", hour, min, sec));
         this.totalSteps = 0;
     }
     @Override
