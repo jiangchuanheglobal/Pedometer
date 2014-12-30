@@ -3,8 +3,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation = "vertical"
-    android:padding="5sp"
-    android:id="@+id/">
+    android:padding="5sp">
 
     <!-- top -->
     <LinearLayout
@@ -111,6 +110,7 @@
                 android:background="#00bcd4"
                 android:textColor="#ffffff"
                 android:text="Pause"
+                android:onClick="onStop"
                 />
             <Button
                 android:id="@+id/button_reset"
@@ -123,6 +123,7 @@
                 android:textColor="#ffffff"
                 android:background="#00bcd4"
                 android:text="Reset"
+                android:onClick="onReset"
                 />
 
         </LinearLayout>

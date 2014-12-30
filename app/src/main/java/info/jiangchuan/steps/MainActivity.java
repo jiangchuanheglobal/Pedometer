@@ -28,12 +28,12 @@ public class MainActivity extends Activity implements SensorEventListener
     private final String TAG = "MainActivity";
 
     // view elements
-    private TextView mHZ;    // sample frequency
-    private TextView mPower; // power of spectrum
-    private TextView mWindow; // window size
+    //private TextView mHZ;    // sample frequency
+    //private TextView mPower; // power of spectrum
+    //private TextView boo; // window size
     private TextView mViewSteps; // Steps counting by this algorithm
     private TextView mFreq; // current walking frequency
-    private TextView mThreshold;
+    //private TextView mThreshold;
 
     // sensor
     private SensorManager mSensorManager;
@@ -64,15 +64,16 @@ public class MainActivity extends Activity implements SensorEventListener
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mHZ = (TextView)findViewById(R.id.txtHZ);
-        mWindow = (TextView)findViewById(R.id.txtWNDSize);
-        mPower = (TextView)findViewById(R.id.txtPower);
+        //mHZ = (TextView)findViewById(R.id.txtHZ);
+        //mWindow = (TextView)findViewById(R.id.txtWNDSize);
+        //mPower = (TextView)findViewById(R.id.txtPower);
         mFreq = (TextView)findViewById(R.id.txtFreq);
         mViewSteps = (TextView)findViewById(R.id.txtSteps);
-        mThreshold = (TextView)findViewById(R.id.txtThreshold);
-        mThreshold.setText(Double.toString(threshold));
 
-        mWindow.setText(Integer.toString(windowSize));
+        //mThreshold = (TextView)findViewById(R.id.txtThreshold);
+        //mThreshold.setText(Double.toString(threshold));
+
+        //mWindow.setText(Integer.toString(windowSize));
         // sensor
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
@@ -119,7 +120,7 @@ public class MainActivity extends Activity implements SensorEventListener
 
         if (getRawDataBufferSize() == windowSize) {
             double[]pt = getFrequencyDomainPeakPointInRange(0, 30);
-            mHZ.setText(Double.toString(getCurrentSampleFrequency()));
+            //mHZ.setText(Double.toString(getCurrentSampleFrequency()));
             if (pt[0] >= threshold) {
                 double timeInterval = incrementScale / getCurrentSampleFrequency();
                 totalSteps += pt[1]*timeInterval;
@@ -127,7 +128,7 @@ public class MainActivity extends Activity implements SensorEventListener
             } else {
                 mFreq.setText("0"); // less than threshold, consider its as noise
             }
-            mPower.setText(Double.toString(pt[0]));
+            //mPower.setText(Double.toString(pt[0]));
         }
 
         double x = (double) (event.values[0]);
