@@ -1,91 +1,134 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent">
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation = "vertical"
+    android:padding="5sp">
 
-    <TextView
-        android:layout_width="fill_parent"
+    <!-- top -->
+    <LinearLayout
+        android:paddingTop="10sp"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="step counter demo"
-        android:id="@+id/textView"
-        android:layout_gravity="center_horizontal" />
+        android:layout_width="match_parent"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="sample rate"
-        android:id="@+id/textView8" />
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_gravity="right">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtHZ" />
+            <TextView
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="@dimen/abc_text_size_large_material"
+                android:textColor="#00bcd4"
+                android:text="DURATION"/>
+            <TextView
+                android:id="@+id/textView_stopWatch"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textSize="32sp"
+                android:textStyle="bold"
+                android:textColor="#f57c00"
+                android:text="00:00:01"
+                />
+        </LinearLayout>
+    </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- middle part-->
+    <LinearLayout
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Window Size"
-        android:id="@+id/textView10" />
+        android:layout_width="match_parent"
+        android:padding="10sp"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtWNDSize" />
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#00bcd4"
+            android:textSize="@dimen/abc_text_size_large_material"
+            android:text="STEPS"/>
+        <TextView
+            android:id="@+id/textView_steps"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="80sp"
+            android:padding="5sp"
+            android:textColor="#f57c00"
+            android:textStyle="bold"
+            android:text="10000"
+            />
 
-    <!-- power of spectrum -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Power of Spectrum"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtPower" />
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:textColor="#00bcd4"
+            android:textSize="@dimen/abc_text_size_large_material"
+            android:text="PACE"
+            />
+        <TextView
+            android:id="@+id/textView_StepsPerMinute"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="80sp"
+            android:padding="5sp"
+            android:textColor="#f57c00"
+            android:textStyle="bold"
+            android:text="90"/>
 
-    <!-- threshold -->
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Threshold"/>
+    </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtThreshold" />
 
-    <TextView
-        android:layout_width="wrap_content"
+    <!-- buttom -->
+    <LinearLayout
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Steps Frequency" />
+        android:layout_width="match_parent"
+        android:paddingTop="20sp"
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtFreq" />
+        <LinearLayout
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:orientation="horizontal"
+            android:layout_gravity="center">
+            <Button
+                android:id="@+id/button_pause"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:paddingLeft="25sp"
+                android:paddingRight="25sp"
+                android:layout_marginRight="15dp"
+                android:textSize="@dimen/abc_text_size_large_material"
+                android:background="#00bcd4"
+                android:textColor="#ffffff"
+                android:text="Pause"
+                android:onClick="onPause"
+                />
+            <Button
+                android:id="@+id/button_reset"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content"
+                android:layout_marginLeft="15dp"
+                android:paddingLeft="27sp"
+                android:paddingRight="27sp"
+                android:textSize="@dimen/abc_text_size_large_material"
+                android:textColor="#ffffff"
+                android:background="#00bcd4"
+                android:text="Reset"
+                android:onClick="onReset"
+                />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="steps" />
+        </LinearLayout>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceMedium"
-        android:id="@+id/txtSteps" />
+    </LinearLayout>
+
 </LinearLayout>
 

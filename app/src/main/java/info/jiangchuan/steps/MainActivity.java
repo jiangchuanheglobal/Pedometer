@@ -6,6 +6,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import android.widget.Button;
+
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -23,6 +25,11 @@ import java.io.File;
 import java.io.FileWriter;
 import java.util.Arrays;
 
+import java.util.Timer;
+import java.util.TimerTask;
+import android.os.Handler;
+import android.os.Message;
+
 public class MainActivity extends Activity implements SensorEventListener
 {
     private final String TAG = "MainActivity";
@@ -33,6 +40,7 @@ public class MainActivity extends Activity implements SensorEventListener
     //private TextView boo; // window size
     private TextView mViewSteps; // Steps counting by this algorithm
     private TextView mFreq; // current walking frequency
+    private TextView mStopWatch; // stop watch
     //private TextView mThreshold;
 
     // sensor
@@ -59,6 +67,13 @@ public class MainActivity extends Activity implements SensorEventListener
 
     private boolean hasFilterCoefficient = false; // flag indicates kernel coefficient has been created
 
+    private Timer timer;
+    private Handler timerHandler;
+    private int sec = 0;
+    private int min = 0;
+    private int hour = 0;
+
+    private boolean running = true;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,9 +82,9 @@ public class MainActivity extends Activity implements SensorEventListener
         //mHZ = (TextView)findViewById(R.id.txtHZ);
         //mWindow = (TextView)findViewById(R.id.txtWNDSize);
         //mPower = (TextView)findViewById(R.id.txtPower);
-        mFreq = (TextView)findViewById(R.id.txtFreq);
-        mViewSteps = (TextView)findViewById(R.id.txtSteps);
-
+        mFreq = (TextView)findViewById(R.id.textView_StepsPerMinute);
+        mViewSteps = (TextView)findViewById(R.id.textView_steps);
+        mStopWatch = (TextView)findViewById(R.id.textView_stopWatch);
         //mThreshold = (TextView)findViewById(R.id.txtThreshold);
         //mThreshold.setText(Double.toString(threshold));
 
@@ -78,8 +93,67 @@ public class MainActivity extends Activity implements SensorEventListener
         mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         mAccelerometer = mSensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         mSensorManager.registerListener(this, mAccelerometer , SensorManager.SENSOR_DELAY_GAME );
+
+        // start stopwatch
+        timerHandler = new TimerHandler();
+        timer = new Timer(true);
+        timer.scheduleAtFixedRate(new MyStopWatchTask(this), 0, 1000);
     }
 
+    private class MyStopWatchTask extends TimerTask {
+        private MainActivity activity = null;
+        public MyStopWatchTask(MainActivity _a) {
+           activity = _a;
+        }
+        @Override
+        public void run() {
+            activity.timerHandler.sendEmptyMessage(0);
+        }
+    }
+
+    private class TimerHandler extends Handler {
+        @Override
+        public void handleMessage(Message msg) {
+            min += sec / 60;
+            hour += min / 60;
+            min = min % 60;
+            sec = sec % 60;
+            if (hour == 24) {
+                hour = 0;
+            }
+            mStopWatch.setText(String.format("%2d:%2d:%2d", hour, min, sec));
+            ++sec;
+        }
+
+    }
+    public void onPause(View view) {
+        Button btn = (Button)this.findViewById(R.id.button_pause);
+        if (running) {
+            mSensorManager.unregisterListener(this);
+            timer.cancel();
+            btn.setText("Continue");
+            running = false;
+        } else {
+            timer = new Timer(true);
+            timer.scheduleAtFixedRate(new MyStopWatchTask(this), 0, 1000);
+            mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
+            btn.setText("Pause");
+            running = true;
+        }
+    }
+
+    public void onReset(View view) {
+        this.hour = 0;
+        this.min = 0;
+        this.sec = 0;
+        mStopWatch.setText(String.format("%2d:%2d:%2d", hour, min, sec));
+        this.totalSteps = 0;
+    }
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        timer.cancel();
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -103,6 +177,7 @@ public class MainActivity extends Activity implements SensorEventListener
         return super.onOptionsItemSelected(item);
     }
 
+
     protected void onResume() {
         super.onResume();
         mSensorManager.registerListener(this, mAccelerometer, SensorManager.SENSOR_DELAY_GAME);
@@ -124,7 +199,7 @@ public class MainActivity extends Activity implements SensorEventListener
             if (pt[0] >= threshold) {
                 double timeInterval = incrementScale / getCurrentSampleFrequency();
                 totalSteps += pt[1]*timeInterval;
-                mFreq.setText(Double.toString(pt[1]));
+                mFreq.setText(Integer.toString((int) (pt[1] * 60))); // per mininute
             } else {
                 mFreq.setText("0"); // less than threshold, consider its as noise
             }
@@ -136,7 +211,7 @@ public class MainActivity extends Activity implements SensorEventListener
         double z = (double) (event.values[2]);
 
         appendRawDataIntoBuffer(x, y, z);
-        mViewSteps.setText(Double.toString(totalSteps));
+        mViewSteps.setText(Integer.toString((int) totalSteps));
     }
 
     private double[] getFrequencyDomainPeakPointInRange(int left, int right) {
